@@ -64,7 +64,9 @@ class NoteState extends State<Note> {
     stream.forEach((QuerySnapshot snap) {
       snap.docs.forEach((el) {
         var doc = el.data();
-        _addMessage(doc['user'], doc['message'], doc['date']);
+        if (doc != null) {
+          _addMessage(doc['user'], doc['message'], doc['date']);
+        }
       });
     });
   }
@@ -167,12 +169,13 @@ class NoteState extends State<Note> {
             ],
           ),
         ),
-        RaisedButton(
+        ElevatedButton(
           onPressed: () => sendMsg(txtController.text),
           child: Text("Send!"),
-          elevation: 4.0,
-          splashColor: Colors.blueGrey,
-        )
+          style: ButtonStyle(
+              elevation: MaterialStateProperty.all(4.0),
+              backgroundColor: MaterialStateProperty.all(Colors.blueGrey)),
+        ),
       ],
     );
   }
