@@ -12,15 +12,15 @@ class NoteApp extends StatelessWidget {
     return FutureBuilder(
         future: Firebase.initializeApp(),
         builder: (context, snapshot) {
-          return MaterialApp(
-            home: Scaffold(
-              appBar: AppBar(
-                title: Text("Messenger App"),
+            return snapshot.hasData ? MaterialApp(
+              home: Scaffold(
+                appBar: AppBar(
+                  title: Text("Messenger App"),
+                ),
+                body: Note(),
               ),
-              body: Note(),
-            ),
-            debugShowCheckedModeBanner: false,
-          );
+              debugShowCheckedModeBanner: false,
+            ) : Container(child: CircularProgressIndicator());
         });
   }
 }
@@ -57,18 +57,16 @@ class NoteState extends State<Note> {
   }
 
   _loadAll() {
-    Firebase.initializeApp().then((app){
-      var stream = FirebaseFirestore.instance
-          .collection('messages')
-          .orderBy('date')
-          .snapshots();
-      stream.forEach((QuerySnapshot snap) {
-        snap.docs.forEach((el) {
-          var doc = el.data();
-          if (doc != null) {
-            _addMessage(doc['user'], doc['message'], doc['date']);
-          }
-        });
+    var stream = FirebaseFirestore.instance
+        .collection('messages')
+        .orderBy('date')
+        .snapshots();
+    stream.forEach((QuerySnapshot snap) {
+      snap.docs.forEach((el) {
+        var doc = el.data() as Map;
+        if (doc != null) {
+          _addMessage(doc['user'], doc['message'], doc['date']);
+        }
       });
     });
   }
