@@ -57,16 +57,18 @@ class NoteState extends State<Note> {
   }
 
   _loadAll() {
-    var stream = FirebaseFirestore.instance
-        .collection('messages')
-        .orderBy('date')
-        .snapshots();
-    stream.forEach((QuerySnapshot snap) {
-      snap.docs.forEach((el) {
-        var doc = el.data();
-        if (doc != null) {
-          _addMessage(doc['user'], doc['message'], doc['date']);
-        }
+    Firebase.initializeApp().then((app){
+      var stream = FirebaseFirestore.instance
+          .collection('messages')
+          .orderBy('date')
+          .snapshots();
+      stream.forEach((QuerySnapshot snap) {
+        snap.docs.forEach((el) {
+          var doc = el.data();
+          if (doc != null) {
+            _addMessage(doc['user'], doc['message'], doc['date']);
+          }
+        });
       });
     });
   }
